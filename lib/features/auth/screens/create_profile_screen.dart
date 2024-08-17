@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:dncrp_consumer_app/core/notifiers/loader_notifier.dart';
+import 'package:dncrp_consumer_app/core/utils/snackbar.dart';
+import 'package:dncrp_consumer_app/features/auth/notifiers/auth_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +13,7 @@ import '../../../core/notifiers/language_notifier.dart';
 import '../../../core/utils/pick_pictures.dart';
 import '../../../core/widgets/rounded_elevated_button.dart';
 import '../../../core/widgets/rounded_outlined_button.dart';
+import '../../../models/area.dart';
 import '../notifiers/area_notifier.dart';
 
 class CreateProfileScreen extends ConsumerStatefulWidget {
@@ -34,10 +38,12 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
   DateTime? birthDate;
   String? idType;
   final idController = TextEditingController();
-  String? division;
-  String? district;
+  Division? selectedDivision;
+  District? selectedDistrict;
   final addressController = TextEditingController();
   final postCodeController = TextEditingController();
+
+  bool isAgreed = false;
 
   @override
   void initState() {
@@ -166,9 +172,61 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
     );
   }
 
+  void createUser(
+    BuildContext context,
+    AppLanguage language,
+    File? imageFile, {
+    required String userId,
+    required String username,
+    required String name,
+    required String fatherName,
+    required String motherName,
+    required String email,
+    required String address,
+    required String gender,
+    required String identificationType,
+    required String identificationNo,
+    required String division,
+    required String divisionId,
+    required String district,
+    required String districtId,
+    required int postalCode,
+    required String profession,
+    required String birthDate,
+  }) {
+    ref.read(authProvider.notifier).createUser(
+          context,
+          imageFile!,
+          userId: userId,
+          username: username,
+          name: name,
+          fatherName: fatherName,
+          motherName: motherName,
+          email: email,
+          address: address,
+          gender: gender,
+          identificationType: identificationType,
+          identificationNo: identificationNo,
+          division: division,
+          divisionId: divisionId,
+          district: district,
+          districtId: districtId,
+          postalCode: postalCode,
+          profession: profession,
+          birthDate: birthDate,
+        );
+  }
+
+  void toggleIsAgreed(bool value) {
+    setState(() {
+      isAgreed = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final languageProvider = ref.watch(appLanguageProvider);
+    final isLoading = ref.watch(loaderProvider);
 
     String getCreateProfileText() {
       switch (languageProvider) {
@@ -447,6 +505,11 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
     }
 
     final area = ref.watch(areaProvider);
+    List<District> districts = selectedDivision == null
+        ? []
+        : area
+            .firstWhere((d) => d.division.name == selectedDivision!.name)
+            .districts;
 
     return Container(
       height: MediaQuery.of(context).size.height,
@@ -674,38 +737,6 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
                                       });
                                     },
                                   ),
-                                  // ---------------------------------------
-                                  // ScrollWheelDatePicker(
-                                  //   theme: FlatDatePickerTheme(
-                                  //     backgroundColor: Colors.white,
-                                  //     overlay:
-                                  //         ScrollWheelDatePickerOverlay.holo,
-                                  //     itemTextStyle: defaultItemTextStyle
-                                  //         .copyWith(color: Colors.black),
-                                  //     overlayColor: Colors.black,
-                                  //     overAndUnderCenterOpacity: 0.2,
-                                  //   ),
-                                  //   lastDate: DateTime.now(),
-                                  //   onSelectedItemChanged: (value) {
-                                  //     setState(() {
-                                  //       birthDate = value;
-                                  //     });
-                                  //   },
-                                  // ),
-                                  // ---------------------------------------
-                                  //     CupertinoDatePicker(
-                                  //   mode: CupertinoDatePickerMode.date,
-                                  //   initialDateTime: DateTime.now(),
-                                  //   onDateTimeChanged: (DateTime newDate) {
-                                  //     setState(() {
-                                  //       birthDate = newDate;
-                                  //     });
-                                  //   },
-                                  // ),
-                                  // ---------------------------------------
-                                  // DatePickerDialog(
-                                  //     firstDate: DateTime(1990),
-                                  //     lastDate: DateTime.now()),
                                 ),
                               ],
                             ),
@@ -784,81 +815,6 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
                           ),
                         ],
                       ),
-                      // Column(
-                      //   children: [
-                      //     Padding(
-                      //       padding: const EdgeInsets.symmetric(
-                      //           vertical: 12, horizontal: 8),
-                      //       child: Row(
-                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //         children: [
-                      //           Text(getAddIdentityInformationHeaderText()),
-                      //           ExpansionTile(
-                      //             dense: true,
-                      //             tilePadding:
-                      //                 const EdgeInsets.symmetric(horizontal: 8),
-                      //             collapsedShape: const OutlineInputBorder(),
-                      //             shape: const OutlineInputBorder(),
-                      //             title: Text(
-                      //               pickedGender == null
-                      //                   ? getGenderText()
-                      //                   : pickedGender!,
-                      //               style: const TextStyle(fontSize: 16),
-                      //             ),
-                      //             children: [
-                      //               ListTile(
-                      //                 title: Text(getMaleText()),
-                      //                 onTap: () {
-                      //                   setState(() {
-                      //                     pickedGender = 'male';
-                      //                   });
-                      //                 },
-                      //               ),
-                      //               ListTile(
-                      //                 title: Text(getFemaleText()),
-                      //                 onTap: () {
-                      //                   setState(() {
-                      //                     pickedGender = 'female';
-                      //                   });
-                      //                 },
-                      //               ),
-                      //               ListTile(
-                      //                 title: Text(getOthersText()),
-                      //                 onTap: () {
-                      //                   setState(() {
-                      //                     pickedGender = 'others';
-                      //                   });
-                      //                 },
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //     Container(
-                      //       decoration: BoxDecoration(
-                      //         border: Border.all(),
-                      //         borderRadius: BorderRadius.circular(9),
-                      //       ),
-                      //       child: Column(
-                      //         children: [
-                      //           TextField(
-                      //             onTapOutside: (event) {
-                      //               FocusManager.instance.primaryFocus!.unfocus();
-                      //             },
-                      //             controller: idController,
-                      //             decoration: InputDecoration(
-                      //               hintText: getIdNumbereText(),
-                      //               border: InputBorder.none,
-                      //               contentPadding:
-                      //                   const EdgeInsets.symmetric(horizontal: 8),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -886,8 +842,8 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
+
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: ExpansionTile(
@@ -897,21 +853,31 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
                               collapsedShape: const OutlineInputBorder(),
                               shape: const OutlineInputBorder(),
                               title: Text(
-                                division == null
-                                    ? getDivisionText()
-                                    : division!,
+                                selectedDivision != null
+                                    ? languageProvider == AppLanguage.english
+                                        ? selectedDivision!.name
+                                        : selectedDivision!.bnName
+                                    : languageProvider == AppLanguage.english
+                                        ? 'Division'
+                                        : 'বিভাগ',
                                 style: const TextStyle(fontSize: 16),
                               ),
-                              children: [
-                                ListTile(
-                                  title: Text(getDhakaText()),
+                              children: area.map((divisionWithDistricts) {
+                                return ListTile(
+                                  title: Text(
+                                    languageProvider == AppLanguage.english
+                                        ? divisionWithDistricts.division.name
+                                        : divisionWithDistricts.division.bnName,
+                                  ),
                                   onTap: () {
                                     setState(() {
-                                      division = 'dhaka';
+                                      selectedDivision =
+                                          divisionWithDistricts.division;
+                                      selectedDistrict = null;
                                     });
                                   },
-                                ),
-                              ],
+                                );
+                              }).toList(),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -923,21 +889,29 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
                               collapsedShape: const OutlineInputBorder(),
                               shape: const OutlineInputBorder(),
                               title: Text(
-                                district == null
-                                    ? getDistrictText()
-                                    : district!,
+                                selectedDistrict != null
+                                    ? languageProvider == AppLanguage.english
+                                        ? selectedDistrict!.name
+                                        : selectedDistrict!.bnName
+                                    : languageProvider == AppLanguage.english
+                                        ? 'District'
+                                        : 'জেলা',
                                 style: const TextStyle(fontSize: 16),
                               ),
-                              children: [
-                                ListTile(
-                                  title: Text(getDhakaText()),
+                              enabled: selectedDivision != null,
+                              children: districts.map((district) {
+                                return ListTile(
+                                  title: Text(
+                                      languageProvider == AppLanguage.english
+                                          ? district.name
+                                          : district.bnName),
                                   onTap: () {
                                     setState(() {
-                                      district = 'dhaka';
+                                      selectedDistrict = district;
                                     });
                                   },
-                                ),
-                              ],
+                                );
+                              }).toList(),
                             ),
                           ),
                         ],
@@ -960,8 +934,10 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Checkbox(
-                            value: false,
-                            onChanged: (value) {},
+                            value: isAgreed,
+                            onChanged: (value) {
+                              toggleIsAgreed(value!);
+                            },
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
                             visualDensity: VisualDensity.compact,
@@ -978,10 +954,203 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      RoundedElevatedButton(
-                        label: getNextText(),
-                        onTap: () {},
-                      ),
+
+                      isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: AppPalette.green,
+                              ),
+                            )
+                          : RoundedElevatedButton(
+                              label: getNextText(),
+                              onTap: !isAgreed
+                                  ? () {}
+                                  : () {
+                                      if (nameController.text.trim().isEmpty) {
+                                        showSnackbar(
+                                            context,
+                                            languageProvider ==
+                                                    AppLanguage.english
+                                                ? 'Please enter your full name'
+                                                : 'আপনার পুরো নাম লিখুন');
+                                        return;
+                                      }
+                                      if (fatherNameController.text
+                                          .trim()
+                                          .isEmpty) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please enter your father\'s name'
+                                              : 'আপনার পিতার নাম লিখুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (motherNameController.text
+                                          .trim()
+                                          .isEmpty) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please enter your mother\'s name'
+                                              : 'আপনার মায়ের নাম লিখুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (emailController.text.trim().isEmpty) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please enter your email address'
+                                              : 'আপনার ইমেইল ঠিকানা লিখুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (addressController.text
+                                          .trim()
+                                          .isEmpty) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please enter your address'
+                                              : 'আপনার ঠিকানা লিখুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (pickedGender == null) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please select your gender'
+                                              : 'আপনার লিঙ্গ নির্বাচন করুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (idType == null) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please select an identification type'
+                                              : 'একটি পরিচয় প্রকার নির্বাচন করুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (idController.text.trim().isEmpty) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please enter your identification number'
+                                              : 'আপনার পরিচয় নম্বর লিখুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (selectedDivision == null) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please select your division'
+                                              : 'আপনার বিভাগ নির্বাচন করুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (selectedDistrict == null) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please select your district'
+                                              : 'আপনার জেলা নির্বাচন করুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (postCodeController.text
+                                          .trim()
+                                          .isEmpty) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please enter your postal code'
+                                              : 'আপনার পোস্টাল কোড লিখুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (professionController.text
+                                          .trim()
+                                          .isEmpty) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please enter your profession'
+                                              : 'আপনার পেশা লিখুন',
+                                        );
+                                        return;
+                                      }
+
+                                      if (birthDate == null) {
+                                        showSnackbar(
+                                          context,
+                                          languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Please select your birth date'
+                                              : 'আপনার জন্ম তারিখ নির্বাচন করুন',
+                                        );
+                                        return;
+                                      }
+                                      createUser(
+                                        context,
+                                        languageProvider,
+                                        pickedImage!,
+                                        userId: widget.userId,
+                                        username: widget.phoneNumber,
+                                        name: nameController.text.trim(),
+                                        fatherName:
+                                            fatherNameController.text.trim(),
+                                        motherName:
+                                            motherNameController.text.trim(),
+                                        email: emailController.text.trim(),
+                                        address: addressController.text.trim(),
+                                        gender: pickedGender!,
+                                        identificationType: idType! == 'nid'
+                                            ? 'National ID'
+                                            : idType! == 'bcn'
+                                                ? 'Birth Ceritifate'
+                                                : 'Passport',
+                                        identificationNo:
+                                            idController.text.trim(),
+                                        division: selectedDivision!.name,
+                                        divisionId:
+                                            selectedDistrict!.divisionId,
+                                        district: selectedDistrict!.name,
+                                        districtId:
+                                            selectedDistrict!.districtId,
+                                        postalCode: int.parse(
+                                            postCodeController.text.trim()),
+                                        profession:
+                                            professionController.text.trim(),
+                                        birthDate: birthDate!.toIso8601String(),
+                                      );
+                                    },
+                            ),
                       const SizedBox(height: 16),
                     ],
                   ),

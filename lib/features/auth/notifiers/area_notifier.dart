@@ -12,7 +12,6 @@ class AreaNotifier extends StateNotifier<List<DivisionWithDistricts>> {
   Future<void> getDivisionWithDistricts() async {
     final divisionsWithDistricts = await _areaApi.getDivisionWithDistricts();
     state = divisionsWithDistricts;
-    print(state);
   }
 }
 // -----------------------------------------------------------------------------

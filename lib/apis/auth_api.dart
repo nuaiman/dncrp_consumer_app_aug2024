@@ -16,6 +16,27 @@ abstract class IAuthApi {
   Future<String?> loginUser(String phone, String password);
 
   uploadProfilePicture(File imageFile, String imageName);
+
+  Future<bool> createComplainer({
+    required String userId,
+    required String username,
+    required String name,
+    required String fatherName,
+    required String motherName,
+    required String email,
+    required String profilePicture,
+    required String address,
+    required String gender,
+    required String identificationType,
+    required String identificationNo,
+    required String division,
+    required String divisionId,
+    required String district,
+    required String districtId,
+    required int postalCode,
+    required String profession,
+    required String birthDate,
+  });
 }
 // -----------------------------------------------------------------------------
 
@@ -134,16 +155,14 @@ class AuthApi implements IAuthApi {
   }
 
   @override
-  Future<bool> uploadProfilePicture(File imageFile, String imageName) async {
-    final String endpoint =
-        '/images/evidences-akajsdfljasdfoewruower93427/profilePicture/$imageName';
-    final Uri url = Uri.parse('$profileImageUrl$endpoint');
+  Future<String?> uploadProfilePicture(File imageFile, String imageName) async {
+    final Uri url = Uri.parse(profileImageUrl);
 
     try {
       final request = http.MultipartRequest('POST', url)
         ..fields['description'] = 'Profile picture upload'
         ..files.add(await http.MultipartFile.fromPath(
-          'file', // The name of the form field
+          'image',
           imageFile.path,
           contentType:
               MediaType('image', path.extension(imageFile.path).substring(1)),
@@ -152,21 +171,79 @@ class AuthApi implements IAuthApi {
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
 
-      print(responseBody);
+      final decodedData = jsonDecode(responseBody);
+      final hasError = decodedData['error'] as bool;
 
-      return true;
-
-      // if (response.statusCode == 200) {
-      //   print('Upload successful');
-      //   print('Response body: $responseBody');
-      //   return true;
-      // } else {
-      //   print('Failed to upload image. Status code: ${response.statusCode}');
-      //   print('Response body: $responseBody');
-      //   return false;
-      // }
+      if (!hasError) {
+        return decodedData['data']['image'].toString();
+      } else {
+        return null;
+      }
     } catch (e) {
-      print('Error occurred during file upload: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<bool> createComplainer({
+    required String userId,
+    required String username,
+    required String name,
+    required String fatherName,
+    required String motherName,
+    required String email,
+    required String profilePicture,
+    required String address,
+    required String gender,
+    required String identificationType,
+    required String identificationNo,
+    required String division,
+    required String divisionId,
+    required String district,
+    required String districtId,
+    required int postalCode,
+    required String profession,
+    required String birthDate,
+  }) async {
+    const String endpoint = '/cmplnr/crt';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'userId': userId,
+          'username': username,
+          'name': name,
+          'fatherName': fatherName,
+          'motherName': motherName,
+          'email': email,
+          'profilePicture': profilePicture,
+          'address': address,
+          'gender': gender,
+          'identificationType': identificationType,
+          'identificationNo': identificationNo,
+          'division': division,
+          'divisionId': divisionId,
+          'district': district,
+          'districtId': districtId,
+          'postalCode': postalCode,
+          'profession': profession,
+          'birthDate': birthDate,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print(response.body);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error: $e');
       return false;
     }
   }

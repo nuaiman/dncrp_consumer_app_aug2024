@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:path/path.dart' as path;
 
 import 'package:dncrp_consumer_app/apis/auth_api.dart';
 import 'package:dncrp_consumer_app/core/notifiers/loader_notifier.dart';
@@ -16,13 +18,13 @@ import '../../../core/utils/navigators.dart';
 import '../../../models/area.dart';
 import '../../dashboard/screens/dashboard_init_screen.dart';
 
-class AuthNotifier extends StateNotifier<List<DivisionWithDistricts>> {
+class AuthNotifier extends StateNotifier<bool> {
   final LoaderNotifier _loader;
   final AuthApi _authApi;
   AuthNotifier({required LoaderNotifier loader, required AuthApi authApi})
       : _loader = loader,
         _authApi = authApi,
-        super([]);
+        super(false);
 
 //         Future<void> checkLoginStatus() async {
 //   final prefs = await SharedPreferences.getInstance();
@@ -185,11 +187,101 @@ class AuthNotifier extends StateNotifier<List<DivisionWithDistricts>> {
       );
     }
   }
+
+  Future<String?> uploadProfilePicture(File imageFile) async {
+    final imageName = path.basename(imageFile.path);
+    final response = await _authApi.uploadProfilePicture(imageFile, imageName);
+    if (response != null) {
+      return response;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> createUser(
+    BuildContext context,
+    File? imageFile, {
+    required String userId,
+    required String username,
+    required String name,
+    required String fatherName,
+    required String motherName,
+    required String email,
+    required String address,
+    required String gender,
+    required String identificationType,
+    required String identificationNo,
+    required String division,
+    required String divisionId,
+    required String district,
+    required String districtId,
+    required int postalCode,
+    required String profession,
+    required String birthDate,
+  }) async {
+    if (imageFile != null) {
+      _loader.updateState(true);
+      final imageUploadResponse = await uploadProfilePicture(imageFile);
+      final response = await _authApi.createComplainer(
+        userId: userId,
+        username: username,
+        name: name,
+        fatherName: fatherName,
+        motherName: motherName,
+        email: email,
+        profilePicture: imageUploadResponse!,
+        address: address,
+        gender: gender,
+        identificationType: identificationType,
+        identificationNo: identificationNo,
+        division: division,
+        divisionId: divisionId,
+        district: district,
+        districtId: districtId,
+        postalCode: postalCode,
+        profession: profession,
+        birthDate: birthDate,
+      );
+      _loader.updateState(false);
+      if (!response) {
+        return;
+      } else {
+        navigateAndRemoveUntil(context, LoginScreen());
+      }
+    } else {
+      _loader.updateState(true);
+      final response = await _authApi.createComplainer(
+        userId: userId,
+        username: username,
+        name: name,
+        fatherName: fatherName,
+        motherName: motherName,
+        email: email,
+        profilePicture: '',
+        address: address,
+        gender: gender,
+        identificationType: identificationType,
+        identificationNo: identificationNo,
+        division: division,
+        divisionId: divisionId,
+        district: district,
+        districtId: districtId,
+        postalCode: postalCode,
+        profession: profession,
+        birthDate: birthDate,
+      );
+      _loader.updateState(false);
+      if (!response) {
+        return;
+      } else {
+        navigateAndRemoveUntil(context, LoginScreen());
+      }
+    }
+  }
 }
 // -----------------------------------------------------------------------------
 
-final authProvider =
-    StateNotifierProvider<AuthNotifier, List<DivisionWithDistricts>>((ref) {
+final authProvider = StateNotifierProvider<AuthNotifier, bool>((ref) {
   final loader = ref.watch(loaderProvider.notifier);
   final authApi = ref.watch(authApiProvider);
   return AuthNotifier(loader: loader, authApi: authApi);
