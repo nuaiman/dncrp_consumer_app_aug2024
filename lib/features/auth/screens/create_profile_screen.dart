@@ -13,7 +13,10 @@ import '../../../core/widgets/rounded_outlined_button.dart';
 import '../notifiers/area_notifier.dart';
 
 class CreateProfileScreen extends ConsumerStatefulWidget {
-  const CreateProfileScreen({super.key});
+  final String phoneNumber;
+  final String userId;
+  const CreateProfileScreen(
+      {super.key, required this.userId, required this.phoneNumber});
 
   @override
   ConsumerState<CreateProfileScreen> createState() =>
@@ -482,9 +485,9 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
                   ),
                   IconButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      // Navigator.of(context).pop();
                     },
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(null),
                   ),
                 ],
               ),

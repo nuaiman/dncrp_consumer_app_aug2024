@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dncrp_consumer_app/apis/auth_api.dart';
 import 'package:dncrp_consumer_app/core/notifiers/loader_notifier.dart';
 import 'package:dncrp_consumer_app/core/utils/snackbar.dart';
+import 'package:dncrp_consumer_app/features/auth/screens/create_profile_screen.dart';
 import 'package:dncrp_consumer_app/features/auth/screens/login_screen.dart';
 import 'package:dncrp_consumer_app/features/auth/screens/password_screen.dart';
 import 'package:dncrp_consumer_app/features/auth/screens/otp_screen.dart';
@@ -147,16 +148,36 @@ class AuthNotifier extends StateNotifier<List<DivisionWithDistricts>> {
     _loader.updateState(true);
     final response = await _authApi.loginUser(phone, password);
     _loader.updateState(false);
+
     if (response != null) {
-      final decodedResponse = json.decode(response);
-      final data = decodedResponse['data'];
-      final accessToken = data['accessToken'];
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('accessToken', accessToken);
-      await prefs.setString('phone', phone);
-      await prefs.setString('password', password);
-      //
-      navigateAndRemoveUntil(context, const DashboardInit());
+      try {
+        final decodedData = jsonDecode(response);
+        final hasProfile = decodedData['hasProfile'];
+        final userId = decodedData['id'];
+        final accessToken = decodedData['accessToken'] ?? '';
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('accessToken', accessToken);
+        await prefs.setString('phone', phone);
+        await prefs.setString('password', password);
+        //
+        if (hasProfile) {
+          navigateAndRemoveUntil(context, const DashboardInit());
+        } else {
+          navigateAndRemoveUntil(
+              context,
+              CreateProfileScreen(
+                userId: userId,
+                phoneNumber: phone,
+              ));
+        }
+      } catch (e) {
+        showSnackbar(
+          context,
+          language == AppLanguage.bangla
+              ? 'লগইন করা যায়নি'
+              : 'Could not login',
+        );
+      }
     } else {
       showSnackbar(
         context,

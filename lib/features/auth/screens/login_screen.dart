@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/palette.dart';
 import '../../../core/constants/pngs.dart';
 import '../../../core/notifiers/language_notifier.dart';
+import '../../../core/notifiers/loader_notifier.dart';
 import '../../../core/utils/navigators.dart';
 import '../../../core/widgets/rounded_elevated_button.dart';
 import '../notifiers/auth_notifier.dart';
@@ -39,6 +40,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final languageProvider = ref.watch(appLanguageProvider);
+    final isLoading = ref.watch(loaderProvider);
 
     String getHeaderText() {
       switch (languageProvider) {
@@ -157,21 +159,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ],
                 ),
               ),
-              const SizedBox(),
-              const SizedBox(),
-              const SizedBox(),
             ],
           ),
         ),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.only(bottom: 20),
-          child: RoundedElevatedButton(
-            label: getNextText(),
-            onTap: () {
-              login(ref, languageProvider, phoneController.text.trim(),
-                  passwordController.text.trim());
-            },
-          ),
+          child: isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    color: AppPalette.green,
+                  ),
+                )
+              : RoundedElevatedButton(
+                  label: getNextText(),
+                  onTap: () {
+                    login(ref, languageProvider, phoneController.text.trim(),
+                        passwordController.text.trim());
+                  },
+                ),
         ),
       ),
     );
