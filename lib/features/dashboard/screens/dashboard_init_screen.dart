@@ -6,6 +6,10 @@ class DashboardInit extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('1234'),
+      ),
+    );
   }
 }

@@ -25,21 +25,35 @@ class AuthNotifier extends StateNotifier<bool> {
         _authApi = authApi,
         super(false);
 
-//         Future<void> checkLoginStatus() async {
-//   final prefs = await SharedPreferences.getInstance();
-//   final accessToken = prefs.getString('accessToken');
-//   final phone = prefs.getString('phone');
-//   final password = prefs.getString('password'); // if saved
-//   if (accessToken != null && phone != null) {
-//     // Use the accessToken to make authenticated requests
-//     // Optionally use phone and password if needed
-//     // Navigate to the dashboard or main screen
-//     // navigateToDashboard();
-//   } else {
-//     // Navigate to the login screen
-//     // navigateToLogin();
-//   }
-// }
+  // Future<void> checkLoginStatus() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final accessToken = prefs.getString('accessToken');
+  //   final phone = prefs.getString('phone');
+  //   final password = prefs.getString('password'); // if saved
+  //   if (accessToken != null && phone != null) {
+  //     // Use the accessToken to make authenticated requests
+  //     // Optionally use phone and password if needed
+  //     // Navigate to the dashboard or main screen
+  //     // navigateToDashboard();
+  //   } else {
+  //     // Navigate to the login screen
+  //     // navigateToLogin();
+  //   }
+  // }
+
+  Future<bool> checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final accessToken = prefs.getString('accessToken');
+    final phone = prefs.getString('phone');
+
+    // Assuming the presence of accessToken and phone indicates a logged-in user
+    if (accessToken != null && phone != null) {
+      // Optionally, you can add more logic here to verify the token with your server
+      return true; // User is logged in
+    } else {
+      return false; // User is not logged in
+    }
+  }
 
   Future<void> getSignupOTP(
       BuildContext context, AppLanguage language, String phoneNumber) async {
