@@ -7,10 +7,12 @@ import 'package:phone_input/phone_input_package.dart';
 
 import '../../../core/constants/pngs.dart';
 import '../../../core/notifiers/language_notifier.dart';
+import '../../../core/widgets/phone_number_input.dart';
 import '../../../core/widgets/rounded_elevated_button.dart';
 
 class PhoneNumberScreen extends ConsumerStatefulWidget {
-  const PhoneNumberScreen({super.key});
+  final bool isSignup;
+  const PhoneNumberScreen({super.key, required this.isSignup});
 
   @override
   ConsumerState<PhoneNumberScreen> createState() => _LoginScreenState();
@@ -35,11 +37,11 @@ class _LoginScreenState extends ConsumerState<PhoneNumberScreen> {
     String getHeaderText() {
       switch (languageProvider) {
         case AppLanguage.english:
-          return 'Registration';
+          return 'Enter Phone Number';
         case AppLanguage.bangla:
-          return 'রেজিস্ট্রেশন করুন';
+          return 'ফোন নম্বর লিখুন';
         default:
-          return 'Registration';
+          return 'Enter Phone Number';
       }
     }
 
@@ -52,9 +54,18 @@ class _LoginScreenState extends ConsumerState<PhoneNumberScreen> {
       }
     }
 
-    void getOTP(
+    void getSignupOTP(
         BuildContext context, AppLanguage language, String phoneNumber) {
-      ref.read(authProvider.notifier).getOTP(context, language, phoneNumber);
+      ref
+          .read(authProvider.notifier)
+          .getSignupOTP(context, language, phoneNumber);
+    }
+
+    void getPasswordResetOTP(
+        BuildContext context, AppLanguage language, String phoneNumber) {
+      ref
+          .read(authProvider.notifier)
+          .getPasswordResetOTP(context, language, phoneNumber);
     }
 
     return Container(
@@ -97,24 +108,7 @@ class _LoginScreenState extends ConsumerState<PhoneNumberScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    PhoneInput(
-                      controller: phoneController,
-                      showArrow: false,
-                      showFlagInInput: false,
-                      isCountrySelectionEnabled: false,
-                      shouldFormat: true,
-                      validator: PhoneValidator.compose([
-                        PhoneValidator.required(),
-                        PhoneValidator.valid(),
-                      ]),
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.all(12),
-                        border: OutlineInputBorder(),
-                      ),
-                      countrySelectorNavigator:
-                          const CountrySelectorNavigator.draggableBottomSheet(),
-                    ),
+                    PhoneNumberInput(phoneController: phoneController),
                   ],
                 ),
               ),
@@ -131,11 +125,20 @@ class _LoginScreenState extends ConsumerState<PhoneNumberScreen> {
                 )
               : RoundedElevatedButton(
                   label: getNextText(),
-                  onTap: () {
-                    final phoneNumber = phoneController.value!.international
-                        .replaceAll('+88', '');
-                    getOTP(context, languageProvider, phoneNumber);
-                  },
+                  onTap: widget.isSignup
+                      ? () {
+                          final phoneNumber = phoneController
+                              .value!.international
+                              .replaceAll('+88', '');
+                          getSignupOTP(context, languageProvider, phoneNumber);
+                        }
+                      : () {
+                          final phoneNumber = phoneController
+                              .value!.international
+                              .replaceAll('+88', '');
+                          getPasswordResetOTP(
+                              context, languageProvider, phoneNumber);
+                        },
                 ),
         ),
       ),

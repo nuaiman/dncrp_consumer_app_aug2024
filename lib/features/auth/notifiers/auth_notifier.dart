@@ -41,13 +41,18 @@ class AuthNotifier extends StateNotifier<bool> {
 //   }
 // }
 
-  Future<void> getOTP(
+  Future<void> getSignupOTP(
       BuildContext context, AppLanguage language, String phoneNumber) async {
     _loader.updateState(true);
     final response = await _authApi.getOTP(phoneNumber);
     _loader.updateState(false);
     if (response != null) {
-      navigate(context, OtpScreen(phoneNumber: phoneNumber));
+      navigate(
+          context,
+          OtpScreen(
+            phoneNumber: phoneNumber,
+            isSignup: true,
+          ));
       showSnackbar(context, response);
     } else {
       showSnackbar(
@@ -76,8 +81,12 @@ class AuthNotifier extends StateNotifier<bool> {
     }
   }
 
-  Future<void> verifyOTP(BuildContext context, AppLanguage language,
-      String phoneNumber, int otp) async {
+  Future<void> verifySignupOTP(
+    BuildContext context,
+    AppLanguage language,
+    String phoneNumber,
+    int otp,
+  ) async {
     _loader.updateState(true);
     final response = await _authApi.verifyOTP(phoneNumber, otp);
     _loader.updateState(false);
@@ -88,8 +97,8 @@ class AuthNotifier extends StateNotifier<bool> {
             phoneNumber: phoneNumber,
             userId: null,
             isSignup: true,
-            isReset: false,
-            isNeedChange: false,
+            isPasswordReset: false,
+            isNeedPasswordChange: false,
           ));
     } else {
       showSnackbar(
@@ -277,6 +286,89 @@ class AuthNotifier extends StateNotifier<bool> {
       } else {
         navigateAndRemoveUntil(context, LoginScreen());
       }
+    }
+  }
+
+  Future<void> getPasswordResetOTP(
+      BuildContext context, AppLanguage language, String phoneNumber) async {
+    _loader.updateState(true);
+    final response = await _authApi.getOTP(phoneNumber);
+    _loader.updateState(false);
+    if (response != null) {
+      navigate(
+          context,
+          OtpScreen(
+            phoneNumber: phoneNumber,
+            isSignup: false,
+          ));
+      showSnackbar(context, response);
+    } else {
+      showSnackbar(
+          context,
+          language == AppLanguage.english
+              ? 'Couldnot send an OTP'
+              : 'ও.টি.পি পাঠানো যায়নি');
+      return;
+    }
+  }
+
+  Future<void> verifyPasswordResetOTP(
+    BuildContext context,
+    AppLanguage language,
+    String phoneNumber,
+    int otp,
+  ) async {
+    _loader.updateState(true);
+    final response = await _authApi.verifyOTP(phoneNumber, otp);
+    _loader.updateState(false);
+    if (response == true) {
+      navigateAndRemoveUntil(
+          context,
+          PasswordScreen(
+            phoneNumber: phoneNumber,
+            userId: null,
+            isSignup: false,
+            isPasswordReset: true,
+            isNeedPasswordChange: false,
+          ));
+    } else {
+      showSnackbar(
+          context,
+          language == AppLanguage.english
+              ? 'Couldnot verify OTP'
+              : 'ও.টি.পি যাচাই করা যায়নি');
+      return;
+    }
+  }
+
+  Future<void> resetPassword(
+    BuildContext context,
+    AppLanguage language,
+    String phone,
+    String password,
+  ) async {
+    if (phone.length < 11) {
+      showSnackbar(
+        context,
+        language == AppLanguage.bangla
+            ? 'অচল ফোন নম্বর'
+            : 'Invalid phone number',
+      );
+      return;
+    }
+    _loader.updateState(true);
+    final response =
+        await _authApi.resetPassword(phone: phone, password: password);
+    _loader.updateState(false);
+    if (response == true) {
+      navigateAndRemoveUntil(context, const LoginScreen());
+    } else {
+      showSnackbar(
+        context,
+        language == AppLanguage.bangla
+            ? 'সাইন আপ করা যায়নি'
+            : 'Could not signup',
+      );
     }
   }
 }

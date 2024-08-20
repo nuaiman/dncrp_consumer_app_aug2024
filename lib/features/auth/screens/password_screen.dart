@@ -13,16 +13,16 @@ class PasswordScreen extends ConsumerStatefulWidget {
   final String? userId;
   final String phoneNumber;
   final bool isSignup;
-  final bool isReset;
-  final bool isNeedChange;
+  final bool isPasswordReset;
+  final bool isNeedPasswordChange;
 
   const PasswordScreen({
     super.key,
     required this.phoneNumber,
     required this.userId,
     required this.isSignup,
-    required this.isReset,
-    required this.isNeedChange,
+    required this.isPasswordReset,
+    required this.isNeedPasswordChange,
   });
 
   @override
@@ -98,6 +98,23 @@ class _LoginScreenState extends ConsumerState<PasswordScreen> {
       ref
           .read(authProvider.notifier)
           .signup(context, language, phone, password);
+    }
+
+    void resetPassword(BuildContext context, AppLanguage language, String phone,
+        String password) {
+      if (passwordController.text.trim() !=
+          confirmPasswordController.text.trim()) {
+        showSnackbar(
+          context,
+          language == AppLanguage.bangla
+              ? 'অচল পাসওয়ার্ড'
+              : 'Invalid password',
+        );
+        return;
+      }
+      ref
+          .read(authProvider.notifier)
+          .resetPassword(context, language, phone, password);
     }
 
     return Container(
@@ -182,7 +199,13 @@ class _LoginScreenState extends ConsumerState<PasswordScreen> {
                           signUp(context, languageProvider, widget.phoneNumber,
                               passwordController.text.trim());
                         }
-                      : () {},
+                      : () {
+                          resetPassword(
+                              context,
+                              languageProvider,
+                              widget.phoneNumber,
+                              passwordController.text.trim());
+                        },
                 ),
         ),
       ),

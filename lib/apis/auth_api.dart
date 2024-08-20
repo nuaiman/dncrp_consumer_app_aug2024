@@ -37,6 +37,8 @@ abstract class IAuthApi {
     required String profession,
     required String birthDate,
   });
+
+  Future<bool> resetPassword({required String phone, required String password});
 }
 // -----------------------------------------------------------------------------
 
@@ -237,6 +239,40 @@ class AuthApi implements IAuthApi {
       if (response.statusCode == 201) {
         return true;
       } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> resetPassword(
+      {required String phone, required String password}) async {
+    const String endpoint = '/ath/reset';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'username': phone,
+          'newPassword': password,
+        }),
+      );
+      final responseBody = response.body;
+      print(responseBody);
+      try {
+        final decodedData = jsonDecode(responseBody);
+        final hasError = decodedData['error'] as bool;
+        if (hasError) {
+          return false;
+        } else {
+          return true;
+        }
+      } catch (e) {
         return false;
       }
     } catch (e) {

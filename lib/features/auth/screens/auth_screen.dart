@@ -97,7 +97,11 @@ class AuthScreen extends ConsumerWidget {
                 RoundedElevatedButton(
                   label: getRegistrationText(),
                   onTap: () {
-                    navigate(context, const PhoneNumberScreen());
+                    navigate(
+                        context,
+                        const PhoneNumberScreen(
+                          isSignup: true,
+                        ));
                   },
                 ),
                 const SizedBox(height: 8),

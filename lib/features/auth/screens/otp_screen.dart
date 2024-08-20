@@ -13,7 +13,12 @@ import '../notifiers/auth_notifier.dart';
 
 class OtpScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
-  const OtpScreen({super.key, required this.phoneNumber});
+  final bool isSignup;
+  const OtpScreen({
+    super.key,
+    required this.phoneNumber,
+    required this.isSignup,
+  });
 
   @override
   ConsumerState<OtpScreen> createState() => _OtpScreenState();
@@ -77,11 +82,21 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       });
     }
 
-    void verifyOTP(BuildContext context, AppLanguage language,
+    void verifySignupOTP(BuildContext context, AppLanguage language,
         String phoneNumber, int otp) {
       ref
           .read(authProvider.notifier)
-          .verifyOTP(context, language, phoneNumber, otp);
+          .verifySignupOTP(context, language, phoneNumber, otp);
+      setState(() {
+        otpController.clear();
+      });
+    }
+
+    void verifyPasswordResetOTP(BuildContext context, AppLanguage language,
+        String phoneNumber, int otp) {
+      ref
+          .read(authProvider.notifier)
+          .verifyPasswordResetOTP(context, language, phoneNumber, otp);
       setState(() {
         otpController.clear();
       });
@@ -153,8 +168,17 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                       separatorBuilder: (index) => const SizedBox(width: 8),
                       hapticFeedbackType: HapticFeedbackType.lightImpact,
                       onCompleted: (value) {
-                        verifyOTP(context, languageProvider, widget.phoneNumber,
-                            int.parse(otpController.text));
+                        widget.isSignup
+                            ? verifySignupOTP(
+                                context,
+                                languageProvider,
+                                widget.phoneNumber,
+                                int.parse(otpController.text))
+                            : verifyPasswordResetOTP(
+                                context,
+                                languageProvider,
+                                widget.phoneNumber,
+                                int.parse(otpController.text));
                       },
                     ),
                     const SizedBox(height: 20),
@@ -192,8 +216,11 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               : RoundedElevatedButton(
                   label: getNextText(),
                   onTap: () {
-                    verifyOTP(context, languageProvider, widget.phoneNumber,
-                        int.parse(otpController.text));
+                    widget.isSignup
+                        ? verifySignupOTP(context, languageProvider,
+                            widget.phoneNumber, int.parse(otpController.text))
+                        : verifyPasswordResetOTP(context, languageProvider,
+                            widget.phoneNumber, int.parse(otpController.text));
                   },
                 ),
         ),

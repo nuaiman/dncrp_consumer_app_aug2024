@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:phone_input/phone_input_package.dart';
 
 import '../../../core/constants/palette.dart';
 import '../../../core/constants/pngs.dart';
 import '../../../core/notifiers/language_notifier.dart';
 import '../../../core/notifiers/loader_notifier.dart';
 import '../../../core/utils/navigators.dart';
+import '../../../core/widgets/phone_number_input.dart';
 import '../../../core/widgets/rounded_elevated_button.dart';
 import '../notifiers/auth_notifier.dart';
 import 'phone_number_screen.dart';
@@ -18,7 +20,9 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final phoneController = TextEditingController();
+  final PhoneController phoneController = PhoneController(
+    const PhoneNumber(isoCode: IsoCode.BD, nsn: ''),
+  );
   final passwordController = TextEditingController();
 
   @override
@@ -127,14 +131,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    TextField(
-                      controller: phoneController,
-                      decoration: InputDecoration(
-                        hintText: getEnterMobileText(),
-                        border: const OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
+                    PhoneNumberInput(phoneController: phoneController),
                     const SizedBox(height: 8),
                     TextField(
                       controller: passwordController,
@@ -147,7 +144,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 8),
                     GestureDetector(
                       onTap: () {
-                        navigate(context, const PhoneNumberScreen());
+                        navigate(
+                            context, const PhoneNumberScreen(isSignup: false));
                       },
                       child: Text(
                         getDidForgetPasswordText(),
@@ -173,7 +171,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               : RoundedElevatedButton(
                   label: getNextText(),
                   onTap: () {
-                    login(ref, languageProvider, phoneController.text.trim(),
+                    login(
+                        ref,
+                        languageProvider,
+                        phoneController.value!.international
+                            .replaceAll('+88', ''),
                         passwordController.text.trim());
                   },
                 ),
