@@ -31,7 +31,7 @@ class UserDetailsField extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: 6),
+                const SizedBox(width: 6),
                 Text(
                   value,
                   style: const TextStyle(fontSize: 18),

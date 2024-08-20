@@ -15,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/notifiers/language_notifier.dart';
 import '../../../core/utils/navigators.dart';
-import '../../../models/area.dart';
 import '../../dashboard/screens/dashboard_init_screen.dart';
 
 class AuthNotifier extends StateNotifier<bool> {
@@ -151,10 +150,12 @@ class AuthNotifier extends StateNotifier<bool> {
     final response = await _authApi.loginUser(phone, password);
     _loader.updateState(false);
 
+    print(response);
+
     if (response != null) {
       try {
         final decodedData = jsonDecode(response);
-        final hasProfile = decodedData['hasProfile'];
+        bool? hasProfile = decodedData['hasProfile'] as bool?;
         final userId = decodedData['id'];
         final accessToken = decodedData['accessToken'] ?? '';
         final prefs = await SharedPreferences.getInstance();
@@ -162,7 +163,7 @@ class AuthNotifier extends StateNotifier<bool> {
         await prefs.setString('phone', phone);
         await prefs.setString('password', password);
         //
-        if (hasProfile) {
+        if (hasProfile == null || !hasProfile) {
           navigateAndRemoveUntil(context, const DashboardInit());
         } else {
           navigateAndRemoveUntil(

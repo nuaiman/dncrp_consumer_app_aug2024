@@ -84,7 +84,6 @@ class AuthApi implements IAuthApi {
           'otpCode': otp,
         }),
       );
-      print(response.body);
       if (response.statusCode == 200) {
         return true;
       } else {
@@ -111,7 +110,6 @@ class AuthApi implements IAuthApi {
           'password': password,
         }),
       );
-      print(response.body);
       if (response.statusCode == 201) {
         return true;
       } else {
@@ -144,7 +142,7 @@ class AuthApi implements IAuthApi {
         if (hasError) {
           return null;
         } else {
-          return jsonEncode(decodedData['data']);
+          return jsonEncode(decodedData);
         }
       } catch (e) {
         return null;
@@ -237,13 +235,11 @@ class AuthApi implements IAuthApi {
       );
 
       if (response.statusCode == 201) {
-        print(response.body);
         return true;
       } else {
         return false;
       }
     } catch (e) {
-      print('Error: $e');
       return false;
     }
   }

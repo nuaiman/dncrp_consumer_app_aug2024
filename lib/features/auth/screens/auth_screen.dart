@@ -64,7 +64,7 @@ class AuthScreen extends ConsumerWidget {
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         image: DecorationImage(
           image: AssetImage(Pngs.logo),
