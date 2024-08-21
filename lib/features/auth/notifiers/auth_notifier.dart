@@ -25,33 +25,17 @@ class AuthNotifier extends StateNotifier<bool> {
         _authApi = authApi,
         super(false);
 
-  // Future<void> checkLoginStatus() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final accessToken = prefs.getString('accessToken');
-  //   final phone = prefs.getString('phone');
-  //   final password = prefs.getString('password'); // if saved
-  //   if (accessToken != null && phone != null) {
-  //     // Use the accessToken to make authenticated requests
-  //     // Optionally use phone and password if needed
-  //     // Navigate to the dashboard or main screen
-  //     // navigateToDashboard();
-  //   } else {
-  //     // Navigate to the login screen
-  //     // navigateToLogin();
-  //   }
-  // }
-
-  Future<bool> checkLoginStatus() async {
+  Future<bool> checkLoginStatus(
+      BuildContext context, AppLanguage language) async {
     final prefs = await SharedPreferences.getInstance();
     final accessToken = prefs.getString('accessToken');
     final phone = prefs.getString('phone');
-
-    // Assuming the presence of accessToken and phone indicates a logged-in user
-    if (accessToken != null && phone != null) {
-      // Optionally, you can add more logic here to verify the token with your server
-      return true; // User is logged in
+    final password = prefs.getString('password');
+    if (accessToken != null && phone != null && password != null) {
+      final bool = await login(context, language, phone, password);
+      return bool;
     } else {
-      return false; // User is not logged in
+      return false;
     }
   }
 
@@ -154,7 +138,7 @@ class AuthNotifier extends StateNotifier<bool> {
     }
   }
 
-  Future<void> login(
+  Future<bool> login(
     BuildContext context,
     AppLanguage language,
     String phone,
@@ -167,14 +151,11 @@ class AuthNotifier extends StateNotifier<bool> {
             ? 'অচল ফোন নম্বর'
             : 'Invalid phone number',
       );
-      return;
+      return false;
     }
     _loader.updateState(true);
     final response = await _authApi.loginUser(phone, password);
     _loader.updateState(false);
-
-    print(response);
-
     if (response != null) {
       try {
         final decodedData = jsonDecode(response);
@@ -188,6 +169,7 @@ class AuthNotifier extends StateNotifier<bool> {
         //
         if (hasProfile == null || !hasProfile) {
           navigateAndRemoveUntil(context, const DashboardInit());
+          return true;
         } else {
           navigateAndRemoveUntil(
               context,
@@ -195,6 +177,7 @@ class AuthNotifier extends StateNotifier<bool> {
                 userId: userId,
                 phoneNumber: phone,
               ));
+          return true;
         }
       } catch (e) {
         showSnackbar(
@@ -203,12 +186,14 @@ class AuthNotifier extends StateNotifier<bool> {
               ? 'লগইন করা যায়নি'
               : 'Could not login',
         );
+        return false;
       }
     } else {
       showSnackbar(
         context,
         language == AppLanguage.bangla ? 'লগইন করা যায়নি' : 'Could not login',
       );
+      return false;
     }
   }
 
