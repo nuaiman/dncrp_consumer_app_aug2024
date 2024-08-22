@@ -161,7 +161,7 @@ class AuthNotifier extends StateNotifier<bool> {
         final decodedData = jsonDecode(response);
         bool? hasProfile = decodedData['hasProfile'] as bool?;
         final userId = decodedData['id'];
-        final accessToken = decodedData['accessToken'] ?? '';
+        final accessToken = decodedData['data']['accessToken'] ?? '';
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('accessToken', accessToken);
         await prefs.setString('phone', phone);
@@ -369,6 +369,14 @@ class AuthNotifier extends StateNotifier<bool> {
             : 'Could not signup',
       );
     }
+  }
+
+  Future<void> getPerson() async {
+    _loader.updateState(true);
+    final prefs = await SharedPreferences.getInstance();
+    final accessToken = prefs.getString('accessToken');
+    await _authApi.getPerson(accessToken: accessToken!);
+    _loader.updateState(false);
   }
 }
 // -----------------------------------------------------------------------------

@@ -128,4 +128,9 @@ class Complainer {
       'profilePicture': profilePicture,
     };
   }
+
+  @override
+  String toString() {
+    return 'Complainer(id: $id, userId: $userId, name: $name, fatherName: $fatherName, motherName: $motherName, email: $email, address: $address, gender: $gender, identificationType: $identificationType, identificationNo: $identificationNo, division: $division, divisionId: $divisionId, district: $district, districtId: $districtId, postalCode: $postalCode, profession: $profession, birthDate: ${birthDate.toIso8601String()}, updateDate: $updateDate, month: $month, year: $year, creator: $creator, creationDate: ${creationDate.toIso8601String()}, status: $status, active: $active, delete: $delete, deleteDate: $deleteDate, deletedById: $deletedById, username: $username, profilePicture: $profilePicture)';
+  }
 }

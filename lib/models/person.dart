@@ -32,4 +32,9 @@ class Person {
       'status': 200,
     };
   }
+
+  @override
+  String toString() {
+    return 'Person(user: $user, complainer: $complainer, userId: $userId)';
+  }
 }

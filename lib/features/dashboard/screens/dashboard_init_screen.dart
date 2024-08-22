@@ -1,11 +1,27 @@
+import 'package:dncrp_consumer_app/features/dashboard/notifiers/user_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DashboardInit extends ConsumerWidget {
+class DashboardInit extends ConsumerStatefulWidget {
   const DashboardInit({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold();
+  ConsumerState<DashboardInit> createState() => _DashboardInitState();
+}
+
+class _DashboardInitState extends ConsumerState<DashboardInit> {
+  @override
+  void initState() {
+    ref.read(userProvider.notifier).getPerson(context);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }

@@ -124,6 +124,11 @@ class User {
       'updated': updated,
     };
   }
+
+  @override
+  String toString() {
+    return 'User(id: $id, email: $email, username: $username, firstName: $firstName, lastName: $lastName, register: $register, profilePicture: $profilePicture, invitationResponseDate: $invitationResponseDate, creator: $creator, pendingInvitation: $pendingInvitation, updateHistoryList: $updateHistoryList, userType: $userType, userTypeCode: $userTypeCode, hasProfile: $hasProfile, isInvitation: $isInvitation, otpLogin: $otpLogin, isComplete: $isComplete, activationDate: $activationDate, updateDate: ${updateDate.toIso8601String()}, creationDate: ${creationDate.toIso8601String()}, status: $status, active: $active, delete: $delete, deleteDate: $deleteDate, deletedById: $deletedById, roleCode: $roleCode, role: $role, updated: $updated)';
+  }
 }
 
 
