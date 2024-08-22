@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:dncrp_consumer_app/models/person.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'baseurl.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:path/path.dart' as path;
 
 abstract class IUserApi {
   Future<Person?> getPerson({required String accessToken});

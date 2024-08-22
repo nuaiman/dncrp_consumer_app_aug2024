@@ -55,14 +55,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     }
 
-    String getEnterMobileText() {
-      switch (languageProvider) {
-        case AppLanguage.english:
-          return 'Mobile number';
-        case AppLanguage.bangla:
-          return 'মোবাইল নাম্বার';
-      }
-    }
+    // String getEnterMobileText() {
+    //   switch (languageProvider) {
+    //     case AppLanguage.english:
+    //       return 'Mobile number';
+    //     case AppLanguage.bangla:
+    //       return 'মোবাইল নাম্বার';
+    //   }
+    // }
 
     String getEnterPasswordText() {
       switch (languageProvider) {

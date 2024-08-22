@@ -448,32 +448,32 @@ class _CreateProfileScreenState extends ConsumerState<CreateProfileScreen> {
       }
     }
 
-    String getDhakaText() {
-      switch (languageProvider) {
-        case AppLanguage.english:
-          return 'Dhaka';
-        case AppLanguage.bangla:
-          return 'ঢাকা';
-      }
-    }
+    // String getDhakaText() {
+    //   switch (languageProvider) {
+    //     case AppLanguage.english:
+    //       return 'Dhaka';
+    //     case AppLanguage.bangla:
+    //       return 'ঢাকা';
+    //   }
+    // }
 
-    String getDivisionText() {
-      switch (languageProvider) {
-        case AppLanguage.english:
-          return 'Division';
-        case AppLanguage.bangla:
-          return 'বিভাগ';
-      }
-    }
+    // String getDivisionText() {
+    //   switch (languageProvider) {
+    //     case AppLanguage.english:
+    //       return 'Division';
+    //     case AppLanguage.bangla:
+    //       return 'বিভাগ';
+    //   }
+    // }
 
-    String getDistrictText() {
-      switch (languageProvider) {
-        case AppLanguage.english:
-          return 'District';
-        case AppLanguage.bangla:
-          return 'জেলা';
-      }
-    }
+    // String getDistrictText() {
+    //   switch (languageProvider) {
+    //     case AppLanguage.english:
+    //       return 'District';
+    //     case AppLanguage.bangla:
+    //       return 'জেলা';
+    //   }
+    // }
 
     String getPostalCodeText() {
       switch (languageProvider) {

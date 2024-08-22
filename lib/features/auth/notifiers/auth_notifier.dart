@@ -255,7 +255,7 @@ class AuthNotifier extends StateNotifier<bool> {
       if (!response) {
         return;
       } else {
-        navigateAndRemoveUntil(context, LoginScreen());
+        navigateAndRemoveUntil(context, const LoginScreen());
       }
     } else {
       _loader.updateState(true);
@@ -283,7 +283,7 @@ class AuthNotifier extends StateNotifier<bool> {
       if (!response) {
         return;
       } else {
-        navigateAndRemoveUntil(context, LoginScreen());
+        navigateAndRemoveUntil(context, const LoginScreen());
       }
     }
   }
@@ -369,14 +369,6 @@ class AuthNotifier extends StateNotifier<bool> {
             : 'Could not signup',
       );
     }
-  }
-
-  Future<void> getPerson() async {
-    _loader.updateState(true);
-    final prefs = await SharedPreferences.getInstance();
-    final accessToken = prefs.getString('accessToken');
-    await _authApi.getPerson(accessToken: accessToken!);
-    _loader.updateState(false);
   }
 }
 // -----------------------------------------------------------------------------

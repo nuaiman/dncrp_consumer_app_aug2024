@@ -47,14 +47,14 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       }
     }
 
-    String getErrorPinText() {
-      switch (languageProvider) {
-        case AppLanguage.english:
-          return 'Pin is incorrect';
-        case AppLanguage.bangla:
-          return 'পিনটি ভুল';
-      }
-    }
+    // String getErrorPinText() {
+    //   switch (languageProvider) {
+    //     case AppLanguage.english:
+    //       return 'Pin is incorrect';
+    //     case AppLanguage.bangla:
+    //       return 'পিনটি ভুল';
+    //   }
+    // }
 
     String getResendOtpText() {
       switch (languageProvider) {

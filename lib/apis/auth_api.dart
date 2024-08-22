@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dncrp_consumer_app/models/person.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'baseurl.dart';
@@ -40,8 +39,6 @@ abstract class IAuthApi {
   });
 
   Future<bool> resetPassword({required String phone, required String password});
-
-  Future<Person?> getPerson({required String accessToken});
 }
 // -----------------------------------------------------------------------------
 
@@ -141,7 +138,6 @@ class AuthApi implements IAuthApi {
         }),
       );
       final responseBody = response.body;
-      print(responseBody);
       try {
         final decodedData = jsonDecode(responseBody);
         final hasError = decodedData['error'] as bool;
@@ -281,23 +277,6 @@ class AuthApi implements IAuthApi {
     } catch (e) {
       return false;
     }
-  }
-
-  @override
-  Future<Person?> getPerson({required String accessToken}) async {
-    const String endpoint = 'ath/cmplnr/info';
-    final Uri url = Uri.parse('$baseUrl$endpoint');
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': accessToken,
-        },
-      );
-      print(response.body);
-    } catch (e) {}
   }
 }
 // -----------------------------------------------------------------------------
