@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
 Future<File?> pickCameraImage() async {
@@ -21,6 +22,16 @@ Future<File?> pickGalleryImage() async {
   }
   return null;
 }
+
+Future<File?> pickFile() async {
+  final result = await FilePicker.platform.pickFiles();
+  if (result != null && result.files.isNotEmpty) {
+    final file = result.files.single;
+    return File(file.path!);
+  }
+  return null;
+}
+
 
 // Future<List<File>> pickImages(BuildContext context) async {
 //   List<File> images = [];

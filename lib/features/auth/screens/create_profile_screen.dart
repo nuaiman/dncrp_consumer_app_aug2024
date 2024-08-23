@@ -10,7 +10,7 @@ import 'package:scroll_date_picker/scroll_date_picker.dart';
 import '../../../core/constants/palette.dart';
 import '../../../core/constants/pngs.dart';
 import '../../../core/notifiers/language_notifier.dart';
-import '../../../core/utils/pick_pictures.dart';
+import '../../../core/utils/picker_utils.dart';
 import '../../../core/widgets/rounded_elevated_button.dart';
 import '../../../core/widgets/rounded_outlined_button.dart';
 import '../../../models/area.dart';
