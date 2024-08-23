@@ -468,6 +468,7 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
               ),
               const SizedBox(height: 16),
               RoundedElevatedButton(
+                padding: 0,
                 label: getLocalizedText('Submit', 'সাবমিট করুন'),
                 onTap: () {},
               ),

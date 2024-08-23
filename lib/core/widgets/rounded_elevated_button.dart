@@ -7,11 +7,13 @@ class RoundedElevatedButton extends StatelessWidget {
   final Color bgColor;
   final Color textColor;
   final Function onTap;
+  final double padding;
   const RoundedElevatedButton({
     super.key,
     required this.label,
     this.bgColor = AppPalette.green,
     this.textColor = AppPalette.white,
+    this.padding = 0,
     required this.onTap,
   });
 
@@ -20,7 +22,7 @@ class RoundedElevatedButton extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: padding),
         child: ElevatedButton(
           onPressed: () {
             onTap();
