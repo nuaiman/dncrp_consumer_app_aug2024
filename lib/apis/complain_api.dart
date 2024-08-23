@@ -2,16 +2,44 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/complain_type.dart';
 import 'baseurl.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:path/path.dart' as path;
 
 abstract class IComplainApi {
+  Future<List<ComplainType>> fetchComplainTypes();
   uploadEvidence(File imageFile, String imageName);
 }
 // -----------------------------------------------------------------------------
 
 class ComplainApi implements IComplainApi {
+  @override
+  Future<List<ComplainType>> fetchComplainTypes() async {
+    const url = '$baseUrl/cmplntp/allcmplntp';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 202) {
+        final jsonResponse = json.decode(response.body);
+
+        // Check for the 'data' key in the JSON response
+        if (jsonResponse['data'] != null) {
+          final List<dynamic> data = jsonResponse['data'];
+          return data.map((json) => ComplainType.fromJson(json)).toList();
+        } else {
+          throw Exception('Failed to load complain types');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error fetching complain types: $e');
+      return [];
+    }
+  }
+
   @override
   Future<String?> uploadEvidence(File imageFile, String imageName) async {
     final Uri url = Uri.parse(fileUploadUrl);

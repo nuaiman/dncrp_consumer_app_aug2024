@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:dncrp_consumer_app/core/widgets/rounded_elevated_button.dart';
+import 'package:dncrp_consumer_app/features/auth/notifiers/complain_type_notifier.dart';
+import 'package:dncrp_consumer_app/models/complain_type.dart';
 import 'package:dncrp_consumer_app/models/person.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,8 @@ import '../../../core/constants/palette.dart';
 import '../../../core/constants/pngs.dart';
 import '../../../core/notifiers/language_notifier.dart';
 import '../../../core/utils/picker_utils.dart';
+import '../../../models/area.dart';
+import '../../auth/notifiers/area_notifier.dart';
 
 class AddComplainScreen extends ConsumerStatefulWidget {
   final Person person;
@@ -24,15 +28,16 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
   late final TextEditingController fatherNameController;
   late final TextEditingController motherNameController;
   late final TextEditingController nidNumberController;
-  late final TextEditingController divisionController;
-  late final TextEditingController districtController;
+  Division? selectedDivision;
+  District? selectedDistrict;
   late final TextEditingController postalCodeController;
   late final TextEditingController professionController;
   //
+  ComplainType? selectedComplainType;
   final organisationNameController = TextEditingController();
   final organisationAddressController = TextEditingController();
-  final organisationDivisionController = TextEditingController();
-  final organisationDistrictController = TextEditingController();
+  Division? selectedOrganisationDivision;
+  District? selectedOrganisationDistrict;
   final organisationPostalCodeController = TextEditingController();
   final organisationComplainController = TextEditingController();
   //
@@ -50,10 +55,6 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
         TextEditingController(text: widget.person.complainer.motherName);
     nidNumberController =
         TextEditingController(text: widget.person.complainer.identificationNo);
-    divisionController =
-        TextEditingController(text: widget.person.complainer.division);
-    districtController =
-        TextEditingController(text: widget.person.complainer.district);
     postalCodeController = TextEditingController(
         text: widget.person.complainer.postalCode.toString());
     professionController =
@@ -66,14 +67,10 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
     fatherNameController.dispose();
     motherNameController.dispose();
     nidNumberController.dispose();
-    divisionController.dispose();
-    districtController.dispose();
     postalCodeController.dispose();
     professionController.dispose();
     organisationNameController.dispose();
     organisationAddressController.dispose();
-    organisationDivisionController.dispose();
-    organisationDistrictController.dispose();
     organisationPostalCodeController.dispose();
     organisationComplainController.dispose();
     super.dispose();
@@ -113,6 +110,185 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
     });
   }
 
+  void _showDivisionBottomSheet(BuildContext context,
+      List<DivisionWithDistricts> area, AppLanguage languageProvider) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: area.map((divisionWithDistricts) {
+                return Card(
+                  child: ListTile(
+                    title: Text(
+                      languageProvider == AppLanguage.english
+                          ? divisionWithDistricts.division.name
+                          : divisionWithDistricts.division.bnName,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        selectedDivision = divisionWithDistricts.division;
+                        selectedDistrict = null;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDistrictBottomSheet(BuildContext context, List<District> districts,
+      AppLanguage languageProvider) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: districts.map((district) {
+                return Card(
+                  child: ListTile(
+                    title: Text(
+                      languageProvider == AppLanguage.english
+                          ? district.name
+                          : district.bnName,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        selectedDistrict = district;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  void _showOrganisationDivisionBottomSheet(BuildContext context,
+      List<DivisionWithDistricts> area, AppLanguage languageProvider) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: area.map((divisionWithDistricts) {
+                return Card(
+                  child: ListTile(
+                    title: Text(
+                      languageProvider == AppLanguage.english
+                          ? divisionWithDistricts.division.name
+                          : divisionWithDistricts.division.bnName,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        selectedOrganisationDivision =
+                            divisionWithDistricts.division;
+                        selectedOrganisationDistrict = null;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showOrganisationDistrictBottomSheet(BuildContext context,
+      List<District> districts, AppLanguage languageProvider) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: districts.map((district) {
+                return Card(
+                  child: ListTile(
+                    title: Text(
+                      languageProvider == AppLanguage.english
+                          ? district.name
+                          : district.bnName,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        selectedOrganisationDistrict = district;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+// -----------------------------------------------------------------------------
+
+  void _showComplainTypeBottomSheet(BuildContext context,
+      List<ComplainType> complainTypes, AppLanguage languageProvider) {
+    print('1111111111111111111111111111111111111111111');
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: complainTypes.map((complainType) {
+                return Card(
+                  child: ListTile(
+                    title: Text(
+                      languageProvider == AppLanguage.english
+                          ? complainType.name
+                          : complainType.bnName,
+                    ),
+                    onTap: () {
+                      // Handle the selection
+                      setState(() {
+                        selectedComplainType = complainType;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final languageProvider = ref.watch(appLanguageProvider);
@@ -120,6 +296,16 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
     String getLocalizedText(String english, String bangla) {
       return languageProvider == AppLanguage.english ? english : bangla;
     }
+
+    final area = ref.watch(areaProvider);
+    List<District> districts = selectedDivision == null
+        ? []
+        : area
+            .firstWhere((d) => d.division.name == selectedDivision!.name)
+            .districts;
+
+    final complainTypes = ref.watch(complainTypeProvider);
+    print(complainTypes);
 
     Widget buildTextField(TextEditingController controller, String? label,
         {int? minLines, int? maxLines}) {
@@ -304,11 +490,195 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                       buildTextField(nidNumberController,
                           getLocalizedText('N.I.D', 'এন.আই.ডি')),
                       const SizedBox(height: 10),
-                      buildRowTextFields(
-                        leftController: divisionController,
-                        rightController: districtController,
-                        leftLabel: getLocalizedText('Division', 'জেলা'),
-                        rightLabel: getLocalizedText('District', 'জেলা'),
+                      // Row(
+                      //   children: [
+                      //     Expanded(
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Text(
+                      //             getLocalizedText('Division', 'বিভাগ'),
+                      //             style: const TextStyle(
+                      //                 fontSize: 16,
+                      //                 fontWeight: FontWeight.bold),
+                      //           ),
+                      //           ExpansionTile(
+                      //             dense: true,
+                      //             tilePadding:
+                      //                 const EdgeInsets.symmetric(horizontal: 8),
+                      //             collapsedShape: const OutlineInputBorder(),
+                      //             shape: const OutlineInputBorder(),
+                      //             title: Text(
+                      //               selectedDivision != null
+                      //                   ? languageProvider ==
+                      //                           AppLanguage.english
+                      //                       ? selectedDivision!.name
+                      //                       : selectedDivision!.bnName
+                      //                   : languageProvider ==
+                      //                           AppLanguage.english
+                      //                       ? 'Division'
+                      //                       : 'বিভাগ',
+                      //               style: const TextStyle(fontSize: 16),
+                      //             ),
+                      //             children: area.map((divisionWithDistricts) {
+                      //               return ListTile(
+                      //                 title: Text(
+                      //                   languageProvider == AppLanguage.english
+                      //                       ? divisionWithDistricts
+                      //                           .division.name
+                      //                       : divisionWithDistricts
+                      //                           .division.bnName,
+                      //                 ),
+                      //                 onTap: () {
+                      //                   setState(() {
+                      //                     selectedDivision =
+                      //                         divisionWithDistricts.division;
+                      //                     selectedDistrict = null;
+                      //                   });
+                      //                 },
+                      //               );
+                      //             }).toList(),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //     const SizedBox(width: 8),
+                      //     Expanded(
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Text(
+                      //             getLocalizedText('District', 'জেলা'),
+                      //             style: const TextStyle(
+                      //                 fontSize: 16,
+                      //                 fontWeight: FontWeight.bold),
+                      //           ),
+                      //           ExpansionTile(
+                      //             dense: true,
+                      //             tilePadding:
+                      //                 const EdgeInsets.symmetric(horizontal: 8),
+                      //             collapsedShape: const OutlineInputBorder(),
+                      //             shape: const OutlineInputBorder(),
+                      //             title: Text(
+                      //               selectedDistrict != null
+                      //                   ? languageProvider ==
+                      //                           AppLanguage.english
+                      //                       ? selectedDistrict!.name
+                      //                       : selectedDistrict!.bnName
+                      //                   : languageProvider ==
+                      //                           AppLanguage.english
+                      //                       ? 'District'
+                      //                       : 'জেলা',
+                      //               style: const TextStyle(fontSize: 16),
+                      //             ),
+                      //             enabled: selectedDivision != null,
+                      //             children: districts.map((district) {
+                      //               return ListTile(
+                      //                 title: Text(languageProvider ==
+                      //                         AppLanguage.english
+                      //                     ? district.name
+                      //                     : district.bnName),
+                      //                 onTap: () {
+                      //                   setState(() {
+                      //                     selectedDistrict = district;
+                      //                   });
+                      //                 },
+                      //               );
+                      //             }).toList(),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  getLocalizedText('Division', 'বিভাগ'),
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    _showDivisionBottomSheet(
+                                        context, area, languageProvider);
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppPalette.green),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      selectedDivision != null
+                                          ? languageProvider ==
+                                                  AppLanguage.english
+                                              ? selectedDivision!.name
+                                              : selectedDivision!.bnName
+                                          : languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Division'
+                                              : 'বিভাগ',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  getLocalizedText('District', 'জেলা'),
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                GestureDetector(
+                                  onTap: selectedDivision != null
+                                      ? () {
+                                          _showDistrictBottomSheet(context,
+                                              districts, languageProvider);
+                                        }
+                                      : null,
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppPalette.green),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      selectedDistrict != null
+                                          ? languageProvider ==
+                                                  AppLanguage.english
+                                              ? selectedDistrict!.name
+                                              : selectedDistrict!.bnName
+                                          : languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'District'
+                                              : 'জেলা',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 10),
                       buildRowTextFields(
@@ -356,6 +726,42 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                       vertical: 8.0, horizontal: 12.0),
                   child: Column(
                     children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            getLocalizedText('Complain Type', 'অভিযোগের ধরন'),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              _showComplainTypeBottomSheet(
+                                  context, complainTypes, languageProvider);
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 12),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppPalette.green),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                selectedComplainType != null
+                                    ? languageProvider == AppLanguage.english
+                                        ? selectedComplainType!.name
+                                        : selectedComplainType!.bnName
+                                    : languageProvider == AppLanguage.english
+                                        ? 'Complain Type'
+                                        : 'অভিযোগের ধরন',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
                       buildTextField(
                         organisationNameController,
                         getLocalizedText('Name of Accused Organisation',
@@ -368,11 +774,100 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                             'অভিযুক্ত প্রতিষ্ঠানের ঠিকানা'),
                       ),
                       const SizedBox(height: 10),
-                      buildRowTextFields(
-                        leftController: organisationDivisionController,
-                        rightController: organisationDistrictController,
-                        leftLabel: getLocalizedText('Division', 'জেলা'),
-                        rightLabel: getLocalizedText('District', 'বিভাগ'),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  getLocalizedText('Division', 'বিভাগ'),
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    _showOrganisationDivisionBottomSheet(
+                                        context, area, languageProvider);
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppPalette.green),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      selectedOrganisationDivision != null
+                                          ? languageProvider ==
+                                                  AppLanguage.english
+                                              ? selectedOrganisationDivision!
+                                                  .name
+                                              : selectedOrganisationDivision!
+                                                  .bnName
+                                          : languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'Division'
+                                              : 'বিভাগ',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  getLocalizedText('District', 'জেলা'),
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                GestureDetector(
+                                  onTap: selectedDivision != null
+                                      ? () {
+                                          _showOrganisationDistrictBottomSheet(
+                                              context,
+                                              districts,
+                                              languageProvider);
+                                        }
+                                      : null,
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppPalette.green),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      selectedOrganisationDistrict != null
+                                          ? languageProvider ==
+                                                  AppLanguage.english
+                                              ? selectedOrganisationDistrict!
+                                                  .name
+                                              : selectedOrganisationDistrict!
+                                                  .bnName
+                                          : languageProvider ==
+                                                  AppLanguage.english
+                                              ? 'District'
+                                              : 'জেলা',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 10),
                       buildTextField(
