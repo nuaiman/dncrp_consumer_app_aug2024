@@ -187,12 +187,16 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                     fit: StackFit.expand,
                     children: [
                       Image.file(file, fit: BoxFit.cover),
-                      Positioned(
-                        right: 8,
-                        top: 8,
-                        child: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => removeEvidence(number),
+                      Center(
+                        child: CircleAvatar(
+                          child: Positioned(
+                            right: 8,
+                            top: 8,
+                            child: IconButton(
+                              icon: const Icon(Icons.close, color: Colors.red),
+                              onPressed: () => removeEvidence(number),
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -210,8 +214,7 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Center(
-                    child: Icon(Icons.add_a_photo,
-                        color: AppPalette.green, size: 40),
+                    child: Icon(Icons.add, color: AppPalette.green, size: 40),
                   ),
                 ),
               ),
