@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dncrp_consumer_app/core/widgets/rounded_elevated_button.dart';
 import 'package:dncrp_consumer_app/models/person.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/palette.dart';
 import '../../../core/constants/pngs.dart';
 import '../../../core/notifiers/language_notifier.dart';
+import '../../../core/utils/picker_utils.dart';
 
 class AddComplainScreen extends ConsumerStatefulWidget {
   final Person person;
@@ -24,13 +28,17 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
   late final TextEditingController districtController;
   late final TextEditingController postalCodeController;
   late final TextEditingController professionController;
-  // ----
+  //
   final organisationNameController = TextEditingController();
   final organisationAddressController = TextEditingController();
   final organisationDivisionController = TextEditingController();
   final organisationDistrictController = TextEditingController();
   final organisationPostalCodeController = TextEditingController();
   final organisationComplainController = TextEditingController();
+  //
+  File? evidenceFile1;
+  File? evidenceFile2;
+  File? evidenceFile3;
 
   @override
   void initState() {
@@ -62,7 +70,6 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
     districtController.dispose();
     postalCodeController.dispose();
     professionController.dispose();
-    // ---
     organisationNameController.dispose();
     organisationAddressController.dispose();
     organisationDivisionController.dispose();
@@ -70,6 +77,40 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
     organisationPostalCodeController.dispose();
     organisationComplainController.dispose();
     super.dispose();
+  }
+
+  Future<void> pickEvidence(int number) async {
+    final pickedFile = await pickGalleryImage();
+
+    setState(() {
+      switch (number) {
+        case 1:
+          evidenceFile1 = pickedFile;
+          break;
+        case 2:
+          evidenceFile2 = pickedFile;
+          break;
+        case 3:
+          evidenceFile3 = pickedFile;
+          break;
+      }
+    });
+  }
+
+  void removeEvidence(int number) {
+    setState(() {
+      switch (number) {
+        case 1:
+          evidenceFile1 = null;
+          break;
+        case 2:
+          evidenceFile2 = null;
+          break;
+        case 3:
+          evidenceFile3 = null;
+          break;
+      }
+    });
   }
 
   @override
@@ -129,6 +170,54 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
       );
     }
 
+    Widget buildEvidenceContainer(File? file, int number) {
+      return Expanded(
+        child: file != null
+            ? GestureDetector(
+                onTap: () => removeEvidence(number),
+                child: Container(
+                  width: double.infinity,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: AppPalette.greenLite,
+                    border: Border.all(color: AppPalette.green),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.file(file, fit: BoxFit.cover),
+                      Positioned(
+                        right: 8,
+                        top: 8,
+                        child: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => removeEvidence(number),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : GestureDetector(
+                onTap: () => pickEvidence(number),
+                child: Container(
+                  width: double.infinity,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: AppPalette.greenLite,
+                    border: Border.all(color: AppPalette.green),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.add_a_photo,
+                        color: AppPalette.green, size: 40),
+                  ),
+                ),
+              ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
@@ -168,7 +257,6 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                       fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
-              // ----------
               const Divider(color: AppPalette.greenLite),
               const SizedBox(height: 10),
               Container(
@@ -233,7 +321,6 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              // ----------
               const Divider(color: AppPalette.greenLite),
               const SizedBox(height: 10),
               Container(
@@ -267,14 +354,16 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                   child: Column(
                     children: [
                       buildTextField(
-                          organisationNameController,
-                          getLocalizedText('Name of Accused Organisation',
-                              'অভিযুক্ত প্রতিষ্ঠানের নাম')),
+                        organisationNameController,
+                        getLocalizedText('Name of Accused Organisation',
+                            'অভিযুক্ত প্রতিষ্ঠানের নাম'),
+                      ),
                       const SizedBox(height: 10),
                       buildTextField(
-                          organisationAddressController,
-                          getLocalizedText('Address of Accused Organisation',
-                              'অভিযুক্ত প্রতিষ্ঠানের ঠিকানা')),
+                        organisationAddressController,
+                        getLocalizedText('Address of Accused Organisation',
+                            'অভিযুক্ত প্রতিষ্ঠানের ঠিকানা'),
+                      ),
                       const SizedBox(height: 10),
                       buildRowTextFields(
                         leftController: organisationDivisionController,
@@ -283,8 +372,10 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                         rightLabel: getLocalizedText('District', 'বিভাগ'),
                       ),
                       const SizedBox(height: 10),
-                      buildTextField(organisationPostalCodeController,
-                          getLocalizedText('Postal Code', 'পোস্টাল কোড')),
+                      buildTextField(
+                        organisationPostalCodeController,
+                        getLocalizedText('Postal Code', 'পোস্টাল কোড'),
+                      ),
                       const SizedBox(height: 16),
                       Container(
                         width: double.infinity,
@@ -297,9 +388,7 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                               left: 12, right: 12, bottom: 12),
                           child: Column(
                             children: [
-                              const SizedBox(
-                                height: 8,
-                              ),
+                              const SizedBox(height: 8),
                               Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(
@@ -352,47 +441,14 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                                       Row(
                                         children: [
                                           const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Container(
-                                              width: double.infinity,
-                                              height: 120,
-                                              decoration: BoxDecoration(
-                                                color: AppPalette.greenLite,
-                                                border: Border.all(
-                                                    color: AppPalette.green),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                          ),
+                                          buildEvidenceContainer(
+                                              evidenceFile1, 1),
                                           const SizedBox(width: 4),
-                                          Expanded(
-                                            child: Container(
-                                              width: double.infinity,
-                                              height: 120,
-                                              decoration: BoxDecoration(
-                                                color: AppPalette.greenLite,
-                                                border: Border.all(
-                                                    color: AppPalette.green),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                          ),
+                                          buildEvidenceContainer(
+                                              evidenceFile2, 2),
                                           const SizedBox(width: 4),
-                                          Expanded(
-                                            child: Container(
-                                              width: double.infinity,
-                                              height: 120,
-                                              decoration: BoxDecoration(
-                                                color: AppPalette.greenLite,
-                                                border: Border.all(
-                                                    color: AppPalette.green),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                          ),
+                                          buildEvidenceContainer(
+                                              evidenceFile3, 3),
                                           const SizedBox(width: 8),
                                         ],
                                       ),
@@ -400,6 +456,7 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 8),
                             ],
                           ),
                         ),
@@ -409,6 +466,12 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              RoundedElevatedButton(
+                label: getLocalizedText('Submit', 'সাবমিট করুন'),
+                onTap: () {},
+              ),
+              const SizedBox(height: 10),
             ],
           ),
         ),
