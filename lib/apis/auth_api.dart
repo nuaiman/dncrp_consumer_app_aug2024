@@ -156,7 +156,7 @@ class AuthApi implements IAuthApi {
 
   @override
   Future<String?> uploadProfilePicture(File imageFile, String imageName) async {
-    final Uri url = Uri.parse(profileImageUrl);
+    final Uri url = Uri.parse(fileUploadUrl);
 
     try {
       final request = http.MultipartRequest('POST', url)
