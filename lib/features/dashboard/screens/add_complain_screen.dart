@@ -80,68 +80,6 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
       return languageProvider == AppLanguage.english ? english : bangla;
     }
 
-    // Widget buildTextField(TextEditingController controller, String label) {
-    //   return Column(
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       Text(
-    //         label,
-    //         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-    //       ),
-    //       const SizedBox(height: 6),
-    //       TextField(
-    //         controller: controller,
-    //         onTapOutside: (event) =>
-    //             FocusManager.instance.primaryFocus?.unfocus(),
-    //         decoration: InputDecoration(
-    //           border: const OutlineInputBorder(borderSide: BorderSide.none),
-    //           enabledBorder: OutlineInputBorder(
-    //             borderSide: const BorderSide(color: AppPalette.green),
-    //             borderRadius: BorderRadius.circular(8),
-    //           ),
-    //           focusedBorder: OutlineInputBorder(
-    //             borderSide: const BorderSide(color: AppPalette.green),
-    //             borderRadius: BorderRadius.circular(8),
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   );
-    // }
-
-    // Widget buildTextField(TextEditingController controller, String? label,
-    //     {int? minLines, int? maxLines}) {
-    //   return Column(
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       if (label != null)
-    //         Text(
-    //           label,
-    //           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-    //         ),
-    //       const SizedBox(height: 6),
-    //       TextField(
-    //         controller: controller,
-    //         onTapOutside: (event) =>
-    //             FocusManager.instance.primaryFocus?.unfocus(),
-    //         minLines: minLines,
-    //         maxLines: maxLines,
-    //         decoration: InputDecoration(
-    //           border: const OutlineInputBorder(borderSide: BorderSide.none),
-    //           enabledBorder: OutlineInputBorder(
-    //             borderSide: const BorderSide(color: AppPalette.green),
-    //             borderRadius: BorderRadius.circular(8),
-    //           ),
-    //           focusedBorder: OutlineInputBorder(
-    //             borderSide: const BorderSide(color: AppPalette.green),
-    //             borderRadius: BorderRadius.circular(8),
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   );
-    // }
-
     Widget buildTextField(TextEditingController controller, String? label,
         {int? minLines, int? maxLines}) {
       return Column(
