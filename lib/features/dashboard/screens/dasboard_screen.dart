@@ -1,3 +1,4 @@
+import 'package:dncrp_consumer_app/models/person.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,20 +12,14 @@ import 'overview_screen.dart';
 import 'settings_screen.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
-  const DashboardScreen({super.key});
+  final Person person;
+  const DashboardScreen({super.key, required this.person});
 
   @override
   ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-  final screens = const [
-    OverviewScreen(),
-    AddComplainScreen(),
-    NotificationsScreen(),
-    SettingsScreen(),
-  ];
-
   int currentIndex = 0;
 
   void onTap(int index) {
@@ -72,6 +67,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           return 'সেটিংস';
       }
     }
+
+    final screens = [
+      const OverviewScreen(),
+      AddComplainScreen(
+        person: widget.person,
+      ),
+      const NotificationsScreen(),
+      const SettingsScreen(),
+    ];
 
     return Scaffold(
       body: screens[currentIndex],

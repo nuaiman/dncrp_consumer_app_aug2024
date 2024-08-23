@@ -26,7 +26,11 @@ class UserNotifier extends StateNotifier<Person?> {
         await _userApi.getPerson(accessToken: 'Bearer ${accessToken!}');
     if (resposne != null) {
       state = resposne;
-      navigateAndRemoveUntil(context, const DashboardScreen());
+      navigateAndRemoveUntil(
+          context,
+          DashboardScreen(
+            person: resposne,
+          ));
     } else {
       return;
     }
