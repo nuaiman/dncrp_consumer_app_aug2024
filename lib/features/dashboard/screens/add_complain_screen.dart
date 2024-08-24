@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:dncrp_consumer_app/core/widgets/rounded_elevated_button.dart';
+import 'package:dncrp_consumer_app/features/auth/notifiers/auth_notifier.dart';
 import 'package:dncrp_consumer_app/features/auth/notifiers/complain_type_notifier.dart';
+import 'package:dncrp_consumer_app/features/dashboard/notifiers/complain_notifier.dart';
+import 'package:dncrp_consumer_app/features/dashboard/notifiers/user_notifier.dart';
 import 'package:dncrp_consumer_app/models/complain_type.dart';
 import 'package:dncrp_consumer_app/models/person.dart';
 import 'package:flutter/material.dart';
@@ -25,11 +28,13 @@ class AddComplainScreen extends ConsumerStatefulWidget {
 
 class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
   late final TextEditingController nameController;
+  late final TextEditingController phoneController;
   late final TextEditingController fatherNameController;
   late final TextEditingController motherNameController;
   late final TextEditingController nidNumberController;
   Division? selectedDivision;
   District? selectedDistrict;
+  late final TextEditingController addressController;
   late final TextEditingController postalCodeController;
   late final TextEditingController professionController;
   //
@@ -49,12 +54,16 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
   void initState() {
     super.initState();
     nameController = TextEditingController(text: widget.person.complainer.name);
+    phoneController =
+        TextEditingController(text: widget.person.complainer.username);
     fatherNameController =
         TextEditingController(text: widget.person.complainer.fatherName);
     motherNameController =
         TextEditingController(text: widget.person.complainer.motherName);
     nidNumberController =
         TextEditingController(text: widget.person.complainer.identificationNo);
+    addressController =
+        TextEditingController(text: widget.person.complainer.address);
     postalCodeController = TextEditingController(
         text: widget.person.complainer.postalCode.toString());
     professionController =
@@ -64,9 +73,11 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
   @override
   void dispose() {
     nameController.dispose();
+    phoneController.dispose();
     fatherNameController.dispose();
     motherNameController.dispose();
     nidNumberController.dispose();
+    addressController.dispose();
     postalCodeController.dispose();
     professionController.dispose();
     organisationNameController.dispose();
@@ -289,6 +300,47 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
     );
   }
 
+  void createComplaint(
+    BuildContext context,
+    AppLanguage language, {
+    required String name,
+    required String phone,
+    required String nid,
+    required String address,
+    required Division division,
+    required District district,
+    required ComplainType complainType,
+    required String orgName,
+    required String orgAddress,
+    required Division orgDivision,
+    required District orgDistrict,
+    required String complainDescription,
+    required List<File> evidences,
+  }) {
+    final String userId = ref.read(userProvider)!.userId.toString();
+    final String complainerId = ref.read(userProvider)!.complainer.id;
+
+    ref.read(complainProvider.notifier).createComplain(
+          context,
+          language,
+          userId: userId,
+          complainerId: complainerId,
+          name: name,
+          phone: phone,
+          nid: nid,
+          address: address,
+          division: division,
+          district: district,
+          complainType: complainType,
+          orgName: orgName,
+          orgAddress: orgAddress,
+          orgDivision: orgDivision,
+          orgDistrict: orgDistrict,
+          complainDescription: complainDescription,
+          evidences: evidences,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     final languageProvider = ref.watch(appLanguageProvider);
@@ -481,14 +533,14 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                       buildTextField(
                           nameController, getLocalizedText('Name', 'নাম')),
                       const SizedBox(height: 10),
-                      buildTextField(fatherNameController,
-                          getLocalizedText('Father\'s name', 'পিতার নাম')),
-                      const SizedBox(height: 10),
-                      buildTextField(motherNameController,
-                          getLocalizedText('Mother\'s name', 'মায়ের নাম')),
+                      buildTextField(
+                          phoneController, getLocalizedText('Phone', 'ফোন')),
                       const SizedBox(height: 10),
                       buildTextField(nidNumberController,
                           getLocalizedText('N.I.D', 'এন.আই.ডি')),
+                      const SizedBox(height: 10),
+                      buildTextField(addressController,
+                          getLocalizedText('Address', 'ঠিকানা')),
                       const SizedBox(height: 10),
                       // Row(
                       //   children: [
@@ -680,14 +732,14 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      buildRowTextFields(
-                        leftController: postalCodeController,
-                        rightController: professionController,
-                        leftLabel:
-                            getLocalizedText('Postal Code', 'পোস্টাল কোড'),
-                        rightLabel: getLocalizedText('Profession', 'পেশা'),
-                      ),
+                      // const SizedBox(height: 10),
+                      // buildRowTextFields(
+                      //   leftController: postalCodeController,
+                      //   rightController: professionController,
+                      //   leftLabel:
+                      //       getLocalizedText('Postal Code', 'পোস্টাল কোড'),
+                      //   rightLabel: getLocalizedText('Profession', 'পেশা'),
+                      // ),
                       const SizedBox(height: 8),
                     ],
                   ),
@@ -869,11 +921,11 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      buildTextField(
-                        organisationPostalCodeController,
-                        getLocalizedText('Postal Code', 'পোস্টাল কোড'),
-                      ),
+                      // const SizedBox(height: 10),
+                      // buildTextField(
+                      //   organisationPostalCodeController,
+                      //   getLocalizedText('Postal Code', 'পোস্টাল কোড'),
+                      // ),
                       const SizedBox(height: 16),
                       Container(
                         width: double.infinity,
@@ -968,7 +1020,26 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
               RoundedElevatedButton(
                 padding: 0,
                 label: getLocalizedText('Submit', 'সাবমিট করুন'),
-                onTap: () {},
+                onTap: () {
+                  createComplaint(
+                    context,
+                    languageProvider,
+                    name: nameController.text.trim(),
+                    phone: phoneController.text.trim(),
+                    nid: nidNumberController.text.trim(),
+                    address: addressController.text.trim(),
+                    division: selectedDivision!,
+                    district: selectedDistrict!,
+                    complainType: selectedComplainType!,
+                    orgName: organisationNameController.text.trim(),
+                    orgAddress: organisationAddressController.text.trim(),
+                    orgDivision: selectedOrganisationDivision!,
+                    orgDistrict: selectedOrganisationDistrict!,
+                    complainDescription:
+                        organisationComplainController.text.trim(),
+                    evidences: [],
+                  );
+                },
               ),
               const SizedBox(height: 10),
             ],
