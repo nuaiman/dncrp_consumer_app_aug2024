@@ -89,7 +89,7 @@
 //   }
 // }
 
-class Complaint {
+class Complain {
   final String complainTypeId;
   final String complainType;
   final String accusedOrganizationName;
@@ -177,7 +177,7 @@ class Complaint {
   final DateTime? deleteDate;
   final String? deletedById;
 
-  Complaint({
+  Complain({
     required this.complainTypeId,
     required this.complainType,
     required this.accusedOrganizationName,
@@ -265,8 +265,8 @@ class Complaint {
   });
 
   // Method to convert JSON to Complaint object
-  factory Complaint.fromJson(Map<String, dynamic> json) {
-    return Complaint(
+  factory Complain.fromJson(Map<String, dynamic> json) {
+    return Complain(
       complainTypeId: json['complainTypeId'] as String,
       complainType: json['complainType'] as String,
       accusedOrganizationName: json['accusedOrganizationName'] as String,

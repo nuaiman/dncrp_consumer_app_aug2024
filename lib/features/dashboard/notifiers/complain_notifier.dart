@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../models/area.dart';
 
-class ComplainNotifier extends StateNotifier<List<Complaint>> {
+class ComplainNotifier extends StateNotifier<List<Complain>> {
   final LoaderNotifier _loader;
   final ComplainApi _complainApi;
   ComplainNotifier(
@@ -38,7 +38,7 @@ class ComplainNotifier extends StateNotifier<List<Complaint>> {
     required String complainDescription,
     required List<File> evidences,
   }) async {
-    final complaint = Complaint(
+    final complaint = Complain(
       complainerId: complainerId,
       complainId: '',
       trackingId: '',
@@ -66,7 +66,7 @@ class ComplainNotifier extends StateNotifier<List<Complaint>> {
 // -----------------------------------------------------------------------------
 
 final complainProvider =
-    StateNotifierProvider<ComplainNotifier, List<Complaint>>((ref) {
+    StateNotifierProvider<ComplainNotifier, List<Complain>>((ref) {
   final loader = ref.watch(loaderProvider.notifier);
   final complainAPi = ref.watch(complainApiProvider);
   return ComplainNotifier(
