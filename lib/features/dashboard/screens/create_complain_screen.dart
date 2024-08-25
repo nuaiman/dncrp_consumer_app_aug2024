@@ -430,11 +430,14 @@ class _AddComplainScreenState extends ConsumerState<CreateComplainScreen> {
                     fit: StackFit.expand,
                     children: [
                       Image.file(file, fit: BoxFit.cover),
-                      Center(
-                        child: CircleAvatar(
-                          child: Positioned(
-                            right: 8,
-                            top: 8,
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                        left: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: CircleAvatar(
                             child: IconButton(
                               icon: const Icon(Icons.close, color: Colors.red),
                               onPressed: () => removeEvidence(number),

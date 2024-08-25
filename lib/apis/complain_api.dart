@@ -13,7 +13,7 @@ abstract class IComplainApi {
 
   uploadEvidence(File imageFile, String imageName);
 
-  Future<String?> createComplain(Complain complaint);
+  Future<Map<String, dynamic>?> createComplain(Complain complaint);
 }
 // -----------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ class ComplainApi implements IComplainApi {
   }
 
   @override
-  Future<String?> createComplain(Complain complaint) async {
+  Future<Map<String, dynamic>?> createComplain(Complain complaint) async {
     const url = '$baseUrl/cmpln/crt';
     // Convert the Complaint object to JSON
     final Map<String, dynamic> payload = {
@@ -105,10 +105,8 @@ class ComplainApi implements IComplainApi {
         body: jsonPayload,
       );
 
-      print(response.statusCode);
-
       if (response.statusCode == 201) {
-        return json.decode(response.body);
+        return jsonDecode(response.body);
       } else {
         return null;
       }

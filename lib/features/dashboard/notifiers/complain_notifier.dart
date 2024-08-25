@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dncrp_consumer_app/apis/complain_api.dart';
@@ -62,7 +63,10 @@ class ComplainNotifier extends StateNotifier<List<Complain>> {
     final response = await _complainApi.createComplain(complaint);
     _loader.updateState(false);
     if (response != null) {
-      print(response);
+      print(response['data']['_id']);
+      final updatedComplain = complaint.copyWith(
+          complainId: response['data']['_id'],
+          trackingId: response['data']['trackingId']);
     } else {}
   }
 }
