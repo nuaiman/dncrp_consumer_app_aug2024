@@ -60,14 +60,27 @@ class ComplainNotifier extends StateNotifier<List<Complain>> {
       victimUserId: userId,
     );
     _loader.updateState(true);
-    final response = await _complainApi.createComplain(complaint);
-    _loader.updateState(false);
-    if (response != null) {
-      print(response['data']['_id']);
-      final updatedComplain = complaint.copyWith(
-          complainId: response['data']['_id'],
-          trackingId: response['data']['trackingId']);
-    } else {}
+
+//
+    List<String> evidenceUrls = [];
+    for (final file in evidences) {
+      final fileName = file.uri.pathSegments.last;
+      final fileUrl = await _complainApi.uploadEvidence(file, fileName);
+      if (fileUrl != null) {
+        evidenceUrls.add(fileUrl);
+      }
+    }
+
+//
+    print(evidenceUrls);
+    // final response = await _complainApi.createComplain(complaint);
+    // _loader.updateState(false);
+    // if (response != null) {
+    //   print(response['data']['_id']);
+    //   final updatedComplain = complaint.copyWith(
+    //       complainId: response['data']['_id'],
+    //       trackingId: response['data']['trackingId']);
+    // } else {}
   }
 }
 // -----------------------------------------------------------------------------

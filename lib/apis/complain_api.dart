@@ -43,10 +43,11 @@ class ComplainApi implements IComplainApi {
 
   @override
   Future<String?> uploadEvidence(File imageFile, String imageName) async {
-    final Uri url = Uri.parse(fileUploadUrl);
+    final Uri url =
+        Uri.parse('/evidences-akajsdfljasdfoewruower93427/$fileUploadUrl');
     try {
       final request = http.MultipartRequest('POST', url)
-        ..fields['description'] = 'Profile picture upload'
+        ..fields['description'] = 'Evidence picture upload'
         ..files.add(await http.MultipartFile.fromPath(
           'image',
           imageFile.path,
@@ -57,6 +58,7 @@ class ComplainApi implements IComplainApi {
       final responseBody = await response.stream.bytesToString();
 
       final decodedData = jsonDecode(responseBody);
+      print(decodedData);
       final hasError = decodedData['error'] as bool;
 
       if (!hasError) {

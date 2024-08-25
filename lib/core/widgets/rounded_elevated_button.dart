@@ -13,7 +13,7 @@ class RoundedElevatedButton extends StatelessWidget {
     required this.label,
     this.bgColor = AppPalette.green,
     this.textColor = AppPalette.white,
-    this.padding = 0,
+    this.padding = 16,
     required this.onTap,
   });
 
