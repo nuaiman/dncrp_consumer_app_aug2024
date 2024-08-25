@@ -59,7 +59,7 @@ class ComplainNotifier extends StateNotifier<List<Complaint>> {
       victimUserId: userId,
     );
     _loader.updateState(true);
-    await _complainApi.createComplaint(complaint);
+    await _complainApi.createComplain(complaint);
     _loader.updateState(false);
   }
 }

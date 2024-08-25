@@ -16,16 +16,17 @@ import '../../../core/utils/picker_utils.dart';
 import '../../../models/area.dart';
 import '../../auth/notifiers/area_notifier.dart';
 
-class AddComplainScreen extends ConsumerStatefulWidget {
+class CreateComplainScreen extends ConsumerStatefulWidget {
   final Person person;
 
-  const AddComplainScreen({super.key, required this.person});
+  const CreateComplainScreen({super.key, required this.person});
 
   @override
-  ConsumerState<AddComplainScreen> createState() => _AddComplainScreenState();
+  ConsumerState<CreateComplainScreen> createState() =>
+      _AddComplainScreenState();
 }
 
-class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
+class _AddComplainScreenState extends ConsumerState<CreateComplainScreen> {
   late final TextEditingController nameController;
   late final TextEditingController phoneController;
   late final TextEditingController fatherNameController;
@@ -299,7 +300,7 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
     );
   }
 
-  void createComplaint(
+  void createComplain(
     BuildContext context,
     AppLanguage language, {
     required String name,
@@ -356,7 +357,6 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
             .districts;
 
     final complainTypes = ref.watch(complainTypeProvider);
-    print(complainTypes);
 
     Widget buildTextField(TextEditingController controller, String? label,
         {int? minLines, int? maxLines}) {
@@ -1020,7 +1020,7 @@ class _AddComplainScreenState extends ConsumerState<AddComplainScreen> {
                 padding: 0,
                 label: getLocalizedText('Submit', 'সাবমিট করুন'),
                 onTap: () {
-                  createComplaint(
+                  createComplain(
                     context,
                     languageProvider,
                     name: nameController.text.trim(),

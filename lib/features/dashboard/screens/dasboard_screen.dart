@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/palette.dart';
 import '../../../core/notifiers/language_notifier.dart';
 import '../widgets/bottom_nav_bar_icon_widget.dart';
-import 'add_complain_screen.dart';
+import 'create_complain_screen.dart';
 import 'notifications_screen.dart';
 import 'overview_screen.dart';
 import 'settings_screen.dart';
@@ -70,7 +70,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     final screens = [
       const OverviewScreen(),
-      AddComplainScreen(
+      CreateComplainScreen(
         person: widget.person,
       ),
       const NotificationsScreen(),
