@@ -59,8 +59,11 @@ class ComplainNotifier extends StateNotifier<List<Complain>> {
       victimUserId: userId,
     );
     _loader.updateState(true);
-    await _complainApi.createComplain(complaint);
+    final response = await _complainApi.createComplain(complaint);
     _loader.updateState(false);
+    if (response != null) {
+      print(response);
+    } else {}
   }
 }
 // -----------------------------------------------------------------------------

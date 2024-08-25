@@ -350,10 +350,16 @@ class _AddComplainScreenState extends ConsumerState<CreateComplainScreen> {
     }
 
     final area = ref.watch(areaProvider);
-    List<District> districts = selectedDivision == null
+    List<District> myDistricts = selectedDivision == null
         ? []
         : area
             .firstWhere((d) => d.division.name == selectedDivision!.name)
+            .districts;
+    List<District> orgDistricts = selectedOrganisationDivision == null
+        ? []
+        : area
+            .firstWhere(
+                (d) => d.division.name == selectedOrganisationDivision!.name)
             .districts;
 
     final complainTypes = ref.watch(complainTypeProvider);
@@ -700,7 +706,7 @@ class _AddComplainScreenState extends ConsumerState<CreateComplainScreen> {
                                   onTap: selectedDivision != null
                                       ? () {
                                           _showDistrictBottomSheet(context,
-                                              districts, languageProvider);
+                                              myDistricts, languageProvider);
                                         }
                                       : null,
                                   child: Container(
@@ -882,11 +888,11 @@ class _AddComplainScreenState extends ConsumerState<CreateComplainScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 GestureDetector(
-                                  onTap: selectedDivision != null
+                                  onTap: selectedOrganisationDivision != null
                                       ? () {
                                           _showOrganisationDistrictBottomSheet(
                                               context,
-                                              districts,
+                                              orgDistricts,
                                               languageProvider);
                                         }
                                       : null,
