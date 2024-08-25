@@ -89,14 +89,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         items: [
           BottomNavigationBarItem(
             icon: NavigationBarItemWidget(
-              icon: Icons.list_alt_outlined,
+              icon: Icons.home,
               label: getOverViewText(),
               isSelected: currentIndex == 0 ? true : false,
             ),
           ),
           BottomNavigationBarItem(
             icon: NavigationBarItemWidget(
-              icon: Icons.add,
+              icon: Icons.list_alt_outlined,
               label: getAddText(),
               isSelected: currentIndex == 1 ? true : false,
             ),

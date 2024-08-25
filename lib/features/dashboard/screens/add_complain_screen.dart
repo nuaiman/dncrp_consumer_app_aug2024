@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dncrp_consumer_app/core/widgets/rounded_elevated_button.dart';
-import 'package:dncrp_consumer_app/features/auth/notifiers/auth_notifier.dart';
 import 'package:dncrp_consumer_app/features/auth/notifiers/complain_type_notifier.dart';
 import 'package:dncrp_consumer_app/features/dashboard/notifiers/complain_notifier.dart';
 import 'package:dncrp_consumer_app/features/dashboard/notifiers/user_notifier.dart';

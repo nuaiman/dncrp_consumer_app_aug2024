@@ -90,6 +90,7 @@ class ComplainApi implements IComplainApi {
       'division': complaint.division,
       'evidences': complaint.evidences,
       'victimUserId': complaint.victimUserId,
+      "isSubmit": false,
     };
 
     // Convert the payload to JSON string
@@ -104,7 +105,7 @@ class ComplainApi implements IComplainApi {
         body: jsonPayload,
       );
 
-      print(response.body);
+      print(response.statusCode);
 
       // if (response.statusCode == 201) {
       //   print('Complaint submitted successfully!');
@@ -113,7 +114,7 @@ class ComplainApi implements IComplainApi {
       //       'Failed to submit complaint. Status code: ${response.statusCode}');
       // }
     } catch (e) {
-      print('Error: $e');
+      return;
     }
   }
 }
